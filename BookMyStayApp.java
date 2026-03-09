@@ -3,13 +3,13 @@ import java.util.HashMap;
 /**
  * Book My Stay Application
  *
- * Demonstrates centralized room inventory management
- * using HashMap.
+ * Demonstrates room search and availability check
+ * using centralized inventory.
  *
- * Version 3.1 – Refactored with Inventory Management
+ * Version 4.1 – Added Room Search functionality
  *
  * @author Jatin
- * @version 3.1
+ * @version 4.1
  */
 
 public class BookMyStayApp {
@@ -19,7 +19,7 @@ public class BookMyStayApp {
         System.out.println("=================================");
         System.out.println("        BOOK MY STAY APP         ");
         System.out.println("      Hotel Booking System       ");
-        System.out.println("           Version 3.1           ");
+        System.out.println("           Version 4.1           ");
         System.out.println("=================================");
 
         // Create room objects
@@ -30,17 +30,13 @@ public class BookMyStayApp {
         // Initialize inventory
         RoomInventory inventory = new RoomInventory();
 
-        // Display room details
-        singleRoom.displayRoomDetails(inventory.getAvailability("Single"));
-        doubleRoom.displayRoomDetails(inventory.getAvailability("Double"));
-        suiteRoom.displayRoomDetails(inventory.getAvailability("Suite"));
+        // Create search service
+        RoomSearchService searchService = new RoomSearchService(inventory);
 
-        // Example inventory update
-        System.out.println("\nUpdating inventory...");
-        inventory.updateAvailability("Single", 4);
-
-        System.out.println("Updated Single Room Availability: "
-                + inventory.getAvailability("Single"));
+        // Guest searches for available rooms
+        searchService.searchAvailableRooms(singleRoom, "Single");
+        searchService.searchAvailableRooms(doubleRoom, "Double");
+        searchService.searchAvailableRooms(suiteRoom, "Suite");
     }
 }
 
@@ -114,7 +110,6 @@ class RoomInventory {
 
         availability = new HashMap<>();
 
-        // Initialize room availability
         availability.put("Single", 5);
         availability.put("Double", 3);
         availability.put("Suite", 2);
@@ -124,9 +119,26 @@ class RoomInventory {
 
         return availability.getOrDefault(roomType, 0);
     }
+}
 
-    public void updateAvailability(String roomType, int count) {
 
-        availability.put(roomType, count);
+/* ---------- Room Search Service ---------- */
+
+class RoomSearchService {
+
+    private RoomInventory inventory;
+
+    public RoomSearchService(RoomInventory inventory) {
+        this.inventory = inventory;
+    }
+
+    public void searchAvailableRooms(Room room, String roomType) {
+
+        int available = inventory.getAvailability(roomType);
+
+        // Show only rooms with availability
+        if (available > 0) {
+            room.displayRoomDetails(available);
+        }
     }
 }
