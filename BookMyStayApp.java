@@ -1,11 +1,15 @@
+import java.util.HashMap;
+
 /**
  * Book My Stay Application
  *
- * Demonstrates basic room modeling using abstraction and inheritance.
- * Version 2.1 – Refactored version introducing Room types.
+ * Demonstrates centralized room inventory management
+ * using HashMap.
+ *
+ * Version 3.1 – Refactored with Inventory Management
  *
  * @author Jatin
- * @version 2.1
+ * @version 3.1
  */
 
 public class BookMyStayApp {
@@ -15,7 +19,7 @@ public class BookMyStayApp {
         System.out.println("=================================");
         System.out.println("        BOOK MY STAY APP         ");
         System.out.println("      Hotel Booking System       ");
-        System.out.println("           Version 2.1           ");
+        System.out.println("           Version 3.1           ");
         System.out.println("=================================");
 
         // Create room objects
@@ -23,15 +27,20 @@ public class BookMyStayApp {
         Room doubleRoom = new DoubleRoom();
         Room suiteRoom = new SuiteRoom();
 
-        // Static availability
-        int singleAvailable = 5;
-        int doubleAvailable = 3;
-        int suiteAvailable = 2;
+        // Initialize inventory
+        RoomInventory inventory = new RoomInventory();
 
-        // Display room information
-        singleRoom.displayRoomDetails(singleAvailable);
-        doubleRoom.displayRoomDetails(doubleAvailable);
-        suiteRoom.displayRoomDetails(suiteAvailable);
+        // Display room details
+        singleRoom.displayRoomDetails(inventory.getAvailability("Single"));
+        doubleRoom.displayRoomDetails(inventory.getAvailability("Double"));
+        suiteRoom.displayRoomDetails(inventory.getAvailability("Suite"));
+
+        // Example inventory update
+        System.out.println("\nUpdating inventory...");
+        inventory.updateAvailability("Single", 4);
+
+        System.out.println("Updated Single Room Availability: "
+                + inventory.getAvailability("Single"));
     }
 }
 
@@ -91,5 +100,33 @@ class SuiteRoom extends Room {
         beds = 3;
         size = 600;
         price = 9000;
+    }
+}
+
+
+/* ---------- Inventory Management ---------- */
+
+class RoomInventory {
+
+    private HashMap<String, Integer> availability;
+
+    public RoomInventory() {
+
+        availability = new HashMap<>();
+
+        // Initialize room availability
+        availability.put("Single", 5);
+        availability.put("Double", 3);
+        availability.put("Suite", 2);
+    }
+
+    public int getAvailability(String roomType) {
+
+        return availability.getOrDefault(roomType, 0);
+    }
+
+    public void updateAvailability(String roomType, int count) {
+
+        availability.put(roomType, count);
     }
 }
